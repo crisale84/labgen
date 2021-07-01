@@ -1,12 +1,6 @@
-#Este es el tutorial para correr:
-
-a) Ensamble de novo de RADseq usando el software Stacks en la supercomputadora Miztli
-b) Ensamble  RADcap usando el software Stacks en la supercomputadora Miztli
-c) Ensamble contra un genoma de referencia usando el software Stacks en la supercomputadora Miztli
-d) Análisis de estructura poblacional usando el software Structure en la supercomputadora Miztli, 
-
 
 d) Análisis de estructura poblacional usando el software Structure en la supercomputadora Miztli:
+
 1.- Copia la carpeta software_structure de mi $HOME a tu espacio de trabajo.
 2.- Dentro de la carpeta encontrarás la consola que contiene los siguientes archivos:
  extraparams	mainparams	pops2numb.sh	structure	structure.sh
