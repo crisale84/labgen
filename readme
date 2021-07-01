@@ -1,5 +1,99 @@
-#Estos son los pasos para correr el software Structure en Miztli, 
+#Este es el tutorial para correr:
 
-#1.- Copiar la carpeta "console" en tu espacio de trabajo
-#2.- Dentro de la consola encontrarás estos archivos:
-#       
+a) Ensamble de novo de RADseq usando el software Stacks en la supercomputadora Miztli
+b) Ensamble  RADcap usando el software Stacks en la supercomputadora Miztli
+c) Ensamble contra un genoma de referencia usando el software Stacks en la supercomputadora Miztli
+d) Análisis de estructura poblacional usando el software Structure en la supercomputadora Miztli, 
+
+
+d) Análisis de estructura poblacional usando el software Structure en la supercomputadora Miztli:
+1.- Copia la carpeta software_structure de mi $HOME a tu espacio de trabajo.
+2.- Dentro de la carpeta encontrarás la consola que contiene los siguientes archivos:
+ extraparams	mainparams	pops2numb.sh	structure	structure.sh
+ 
+  El archivo pop2numb.sh te permitirá cambiar la notación de missing data a la reconocida por Structure (-9), por lo que primero deberás copiar el archivo 
+  populations.structure a esta consola:
+  
+  cp ~/populations_output/populations.structure .
+
+Y posteriormente ejecutar :
+    ./pops2numb.sh
+    
+En la pantalla observarás el número de loci que contiene tu archivo populations.structure
+
+3.-Abre mainparams con nano y deberás reemplazar:     
+    #define MAXPOPS XX      // por el número de poblaciones totales que se analizaron en tus datos y se define desde tu popmap.tsv de Stacks
+                             // puedes usar: cat populations.structure | cut -f2 |sort |uniq
+    #define BURNIN  100000    // cien mil réplicas de burning   
+    #define NUMREPS 200000    // doscientos mil iteraciones 
+    
+    #define NUMLOCI XXX    //por  el número de loci que arrojó pops2numb.sh
+    #define NUMINDS XXX    //por el número de individuos en tu archivo, que es igual al número de columnas en populations.structure.modified.tsv entre dos
+    
+Guarda este archivo sobre-escribiendo el nombre mainparams
+    
+4.- Ejecuta:
+    cat populations.structure| cut -f2 | sort |uniq
+    y utiliza ese output para llenar el apartado 3 de pop2numb.sh
+    Con nano, abre: pops2numb.sh 
+    nano pops2numb.sh
+    
+    y, en la sección 3, cambia el nombre de las poblaciones por los números que serán reemplazados, observa que existe un 'tab' antes y después de cada población:
+    
+cat populations.structure.tsv | sed -E \
+-e 's/  BocadeCamichin  /	1	/ ' \
+-e 's/  Chametla    /	2	/ ' \
+-e 's/  Cuautla /	3	/ '  > populations.structure.modified.tsv
+
+    Ejecuta:
+    $./pops2numb.sh
+    
+    
+ 5.- Por ultimo, con nano abre structure.sh
+    nano structure.sh
+
+En el encabezado, seguido de el signo de gato (#) están los parámetros que leerá Miztli a través de bsub, puedes cambiar todo, aquí te dejo lo básico
+de básicos, para mayor información puedes seguir la guía de Miztli:
+
+#!/bin/bash
+#BSUB -J strkBco              <---- Nombre del Job, solo te permite 10 dígitos    
+#BSUB -q q_residual           <---- Nombre de la cola, opciones: q_residual, q_16p_256g , q_32p_256g , q_gpu , q_hpc
+#BSUB -oo salida.p1           <----- aquí se guarda tu output, si no cambias el nombre se sobre-escribe, por favor cámbialo.
+#BSUB -eo error.p1            <----- aquí se guardan los errores en tu output, lo mismo, si no cambias el nombre se sobre-escriba, por favor cámbialo.
+#BSUB -n 6                    <----- Número de nodos, nuestro máximo son 32
+#BSUB -R "span[hosts=1]"     <------ NUNCA LO CAMBIES NI MUEVAS, ESTA LÍNEA CONVERGE TODO EL ANÁLISIS A UN PUNTO DE ENTRADA PARA EL OUTPUT Y QUE NO SE
+                                     DIFUMINE LA INFORMACIÓN POR DOQUIER, CAMBIARLO PUEDE CAUSAR ERRORES EN LA EJECUCIÓN DE TU SCRIPT
+
+     EN EL CUERPO DE structure.sh:
+     
+    Cambia el numero de poblaciones por las poblaciones contadas+uno
+    Si gustas puedes aumentar el número de réplicas, yo trabajo con 3!
+    NO CAMBIES NADA MÁS!
+    Guarda con Ctrl+O
+    Ahora si, ejecuta: 
+    
+    $bsub < structure.sh 
+
+Todos los parámetros serán leídos por bsub y ejecutados en Miztli, dependiendo de la cantidad de burning, réplicas que hayas pedido en mainparams
+y el número de cores y la cola a la que hayas enviado tu trabajo, este script puede tardar algún tiempo...
+puedes consultar el avance de tu trabajo con:
+
+  $bjobs 
+  
+o bien,
+
+$bjobs 885413      <-------- con el número del Job
+    
+Una vez terminado se guarda el Job en una carpeta:
+results_DIA_MES_AÑO.zip
+Esta la puedes descargar a tu computadora personal y ver los resultados en línea
+# upload the results.zip file to the web page:  http://taylor0.biology.ucla.edu/structureHarvester/
+# example of an aplication to obtain a structure plot http://omicsspeaks.com/strplot2/
+
+También puedes ir a esta página
+http://pophelper.com/ y subir tus archivos .meanQ para obtener los resultados graficados en html 
+
+:)
+
+
+       
