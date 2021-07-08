@@ -1,4 +1,5 @@
-a) La carpeta RADcap, contiene los scripts para hacer un ensamble de RADs, tipo RADcap, se corren en Miztli
+a) La carpeta RADcap, contiene los scripts para hacer un ensamble de secuencias de ADN asociadas a los sitios de restricción enzimática (RADseq), de tipo RADcap, 
+estos scripts se ejecutan en Miztli o en cualquier computadora con sistema operativo linux.
 
 
 d) Análisis de estructura poblacional usando el software Structure en la supercomputadora Miztli:
@@ -7,7 +8,7 @@ d) Análisis de estructura poblacional usando el software Structure en la superc
 2.- Dentro de la carpeta encontrarás la consola que contiene los siguientes archivos:
  extraparams	mainparams	pops2numb.sh	structure	structure.sh
  
-  El archivo pop2numb.sh te permitirá cambiar la notación de missing data a la reconocida por Structure (-9), por lo que primero deberás copiar el archivo 
+  El archivo pops2numb.sh te permitirá cambiar la notación de missing data a la reconocida por Structure (-9), por lo que primero deberás copiar el archivo 
   populations.structure a esta consola:
   
   cp ~/populations_output/populations.structure .
